@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body>
+<script src="lib/d3/d3.js"></script>
+<script src="lib/d3/d3.layout.cloud.js"></script>
+<script>
+  var fill = d3.scale.category20();
+
+  d3.layout.cloud().size([1000, 600])
+      .words([
+        "Lorem","ipsum","dolor","sit","amet,","consectetur","adipisicing",
+        "elit","sed","do","eiusmod","tempor","incididunt","ut","labore",
+        "et","dolore","magna","aliqua"].map(function(d) {
+        return {text: d, size: 24 + Math.random() * 48};
+      }))
+      .padding(1)
+      .rotate(function() { return 0;/*~~(Math.random() * 2) * 90;*/ })
+      .font("Impact")
+      .fontSize(function(d) { return d.size; })
+      .spiral(quarterArchimedeanSpiral)
+      .on("end", draw)
+      .start();
+
+  function linearSpiral(size) {
+    var e = size[0] / size[1];
+    return function(t) {
+      t = Math.abs(t);
+      var preX = e * t;
+      var x = preX % size[0];
+      var yMult = preX / size[0];
+      var y = Math.sin(t) * 64 + yMult *64 ;
+      return [x,y];
+    };
+    /*
+    noise(t)
+    x = noise(t) % width
+    y = noise(t) / width
+    */
+  }
+
+  function quarterArchimedeanSpiral(size) {
+    var e = size[0] / size[1];
+    return function(t) {
+      return [ Math.abs(e * (t*=.2) * Math.cos(t)), Math.abs(t * Math.sin(t))];
+    };
+  }
+
+  function rectangularSpiral(size) {
+    var dy = 4,
+        dx = dy * size[0] / size[1], // width/height * dy
+        x = 0,
+        y = 0;
+    return function(t) {
+      var sign = t < 0 ? -1 : 1;
+      // See triangular numbers: T_n = n * (n + 1) / 2.
+      switch ((Math.sqrt(1 + 4 * sign * t) - sign) & 3) {
+        case 0:  x += dx; break;
+        case 1:  y += dy; break;
+        case 2:  x -= dx; break;
+        default: y -= dy; break;
+      }
+      return [x, y];
+    };
+  }
+
+  function archimedeanSpiral(size) {
+    var e = size[0] / size[1];
+    return function(t) {
+      return [e * (t *= .1) * Math.cos(t), t * Math.sin(t)];
+    };
+  }
+
+  function draw(words) {
+    d3.select("body").append("svg")
+        .attr("width", 800)
+        .attr("height", 600)
+      .append("g")
+        .attr("transform", "translate(500,300)")
+      .selectAll("text")
+        .data(words)
+      .enter().append("text")
+        .style("font-size", function(d) { return d.size + "px"; })
+        .style("font-family", "Impact")
+        .style("fill", function(d, i) { return fill(i); })
+        .attr("text-anchor", "middle")
+        .attr("transform", function(d) {
+          return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+        })
+        .text(function(d) { return d.text; });
+  }
+</script>
