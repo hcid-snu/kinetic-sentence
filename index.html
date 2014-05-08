@@ -5,30 +5,33 @@
 <script src="lib/d3/d3.layout.cloud.js"></script>
 <script>
   var fill = d3.scale.category20();
-
-  d3.layout.cloud().size([1000, 600])
-      .words([
+  var words = ["Zero","oooooone", "twooo", "three", "four", "five", 
+  "six", "seven", "eeeight","nine", "ten", "eleven", "twelve", "thirteen", 
+  "fourteen", "fifteen"]/*[
         "Lorem","ipsum","dolor","sit","amet,","consectetur","adipisicing",
         "elit","sed","do","eiusmod","tempor","incididunt","ut","labore",
-        "et","dolore","magna","aliqua"].map(function(d) {
-        return {text: d, size: 24 + Math.random() * 48};
+        "et","dolore","magna","aliqua"];
+        */
+  d3.layout.cloud().size([1000, 600])
+      .words(words.map(function(d) {
+        return {text: d, size: 24 + Math.random() * 64};
       }))
-      .padding(1)
+      .padding(0)
       .rotate(function() { return 0;/*~~(Math.random() * 2) * 90;*/ })
       .font("Impact")
       .fontSize(function(d) { return d.size; })
-      .spiral(quarterArchimedeanSpiral)
+      .spiral(rectangularSpiral)
       .on("end", draw)
       .start();
 
   function linearSpiral(size) {
-    var e = size[0] / size[1];
+    var dy = 4,
+        dx = dy * size[0] / size[1];
+        x = 0;
+        y = 0;
     return function(t) {
-      t = Math.abs(t);
-      var preX = e * t;
-      var x = preX % size[0];
-      var yMult = preX / size[0];
-      var y = Math.sin(t) * 64 + yMult *64 ;
+      x += dx *t;
+      y += dy *t;
       return [x,y];
     };
     /*
@@ -41,7 +44,10 @@
   function quarterArchimedeanSpiral(size) {
     var e = size[0] / size[1];
     return function(t) {
-      return [ Math.abs(e * (t*=.2) * Math.cos(t)), Math.abs(t * Math.sin(t))];
+      //var theta = t % (2*Math.PI);
+      //t = t % (2*Math.PI);
+      //theta = Math.max(Math.min(Math.PI*0.1, theta), Math.PI*0.35);
+      return [Math.abs(e * (t *= .4) * Math.cos(t)), Math.abs(t * Math.sin(t))];
     };
   }
 
