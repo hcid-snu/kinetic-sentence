@@ -14,13 +14,13 @@
         */
   d3.layout.cloud().size([1000, 600])
       .words(words.map(function(d) {
-        return {text: d, size: 24 + Math.random() * 64};
+        return {text: d, size: 18 + Math.random() * 64};
       }))
       .padding(0)
       .rotate(function() { return 0;/*~~(Math.random() * 2) * 90;*/ })
       .font("Impact")
       .fontSize(function(d) { return d.size; })
-      .spiral(rectangularSpiral)
+      .spiral(newRectangularSpiral)
       .on("end", draw)
       .start();
 
@@ -41,16 +41,36 @@
     */
   }
 
+  function newRectangularSpiral(size) {
+    var dy = 2,
+        dx = dy * size[0] / size[1] * 2.5 , // width/height * dy
+        x = 0,
+        y = 0;
+    return function(t) {
+      var sign = t < 0 ? -1 : 1;
+      // See triangular numbers: T_n = n * (n + 1) / 2.
+      switch ((Math.sqrt(1 + 4 * sign * t) - sign) & 3) {
+        case 0:  x += dx; break;
+        case 1:  y += dy; break;
+        case 2:  x -= dx; break;
+        default: y -= dy; break;
+      }
+      return [x, y];
+    };
+  }
+
+
   function quarterArchimedeanSpiral(size) {
     var e = size[0] / size[1];
     return function(t) {
       //var theta = t % (2*Math.PI);
       //t = t % (2*Math.PI);
       //theta = Math.max(Math.min(Math.PI*0.1, theta), Math.PI*0.35);
-      return [Math.abs(e * (t *= .4) * Math.cos(t)), Math.abs(t * Math.sin(t))];
+      return [Math.abs(e * (t *= .1) * Math.cos(t)), Math.abs(t * Math.sin(t))];
     };
   }
 
+  
   function rectangularSpiral(size) {
     var dy = 4,
         dx = dy * size[0] / size[1], // width/height * dy
