@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <body>
-<script src="lib/d3/d3.js"></script>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="lib/d3/d3.layout.cloud.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="lib/jquery.lettering.js"></script>
+<script src="lib/Motion.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+<script src="lib/newMotion.js"> </script>
+
 <script>
   var fill = d3.scale.category20();
   var words = ["Zero","oooooone", "twooo", "three", "four", "five", 
@@ -17,14 +22,14 @@
       .words(words.map(function(d) {
         return {text: d, size: 18 + Math.random() * 64};
       }))
-      .padding(0)
+      .padding(1)
       .rotate(function() { return 0;/*~~(Math.random() * 2) * 90;*/ })
       .font("Impact")
       .fontSize(function(d) { return d.size; })
       .spiral(newRectangularSpiral)
       .on("end", draw)
       .start();
-
+  
   function linearSpiral(size) {
     var dy = 4,
         dx = dy * size[0] / size[1];
@@ -96,6 +101,19 @@
       return [e * (t *= .1) * Math.cos(t), t * Math.sin(t)];
     };
   }
+  
+  function lettering(word) {
+    var word_letters = [], word_letter_objs = [];
+    if (word.text) {
+      word_letters = word.text.split('');
+    }
+    word_letters.forEach(function(l) {
+      word_letter_objs.push({letter:l})
+    });
+    word.letters = word_letter_objs;
+  }
+
+
 
   function draw(words) {
     d3.select("body").append("svg")
@@ -103,11 +121,38 @@
         .attr("height", 600)
       .append("g")
         .attr("transform", "translate(500,300)")
-      .selectAll("text")
+      .selectAll("g")
         .data(words)
-      .enter().append("text")
+      .enter().append("g")
         .attr("class", function(d,i) {return "word " + i;})
-        
+        .each(function(d,i) {
+          lettering(d);
+          var posX = 0;
+          //d.totalW = -1;
+          d3.select(this)
+            .selectAll("text")
+              .data(d.letters)
+            .enter().append("text")
+              .attr("id", function(l, li) {return "text-" + i + "-" + li})
+              .text(function(l) {return l.letter})
+              .style("font-family", "Impact")
+              .style("fill", function(l) { return fill(i); })
+              .attr("text-anchor", "middle")
+              //.style("font-size", function(l) { return d.size + "px"; })
+              /*
+              .each(function(l, li) {
+                var thisW = document.getElementById("text-" + i + "-" + li).getBBox().width;
+                d.totalW += thisW;
+              })
+              */
+              
+          d3.select(this)//.fade(1.0, 1.0).scale(0.5, 1.0)
+          .move(-10, 0, 0,0)
+          .run(300, 150);
+        })
+
+
+        /*
         .style("font-family", "Impact")
         .style("fill", function(d, i) { return fill(i); })
         .attr("text-anchor", "middle")
@@ -115,11 +160,21 @@
           return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
         })
         .text(function(d) { return d.text; })
+        .style("font-size", function(d) { return d.size + "px"; })
+        .each(function(d) {
+          console.log(d);
+        })
+      */
+        
+        /*
         .style("opacity", 0)
         .transition()
         .style("opacity",1.0)
         .style("font-size", function(d) { return d.size + "px"; })
         .duration(1000) // this is 1s
         .delay(function(d,i) {return i*100}); 
+        */
   }
+
+
 </script>
