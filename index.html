@@ -113,8 +113,6 @@
     word.letters = word_letter_objs;
   }
 
-
-
   function draw(words) {
     d3.select("body").append("svg")
         .attr("width", 800)
@@ -146,9 +144,12 @@
               })
               */
               
-          d3.select(this)//.fade(1.0, 1.0).scale(0.5, 1.0)
-          .move(-10, 0, 0,0)
-          .run(300, 150);
+          d3.select(this).scaleDown(500, 200*i, 100)
+          //.spinIn(90, 1000-d.x, -d.y, 400, 200*i, 400)//.fade(1.0, 1.0).scale(0.5, 1.0)
+          //.fadeIn(200, 200*i, 100);
+          //.dropIn(1000, 200, 200*i, 100)
+          //.move(-10, 0, 0,0)
+          //.run(300, 150);
         })
 
 
