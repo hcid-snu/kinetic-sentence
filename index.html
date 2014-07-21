@@ -11,7 +11,8 @@
 
 <script>
   var fill = d3.scale.category20();
-  var words = ['wigglyScale', 'spinIn' , 'scaleUp', 'scaleDown','angry', 'fadeIn', 'fadeOut', 'dropIn']
+  var words = ['wigglyScale', 'spinIn' , 'scaleUp', 'scaleDown','angry', 
+  'fadeIn', 'fadeOut', 'happy', 'dropIn']
   /*["Zero","oooooone", "twooo", "three", "four", "five", 
   "six", "seven", "eeeight","nine", "ten", "eleven", "twelve", "thirteen", 
   "fourteen", "fifteen"]/*[
@@ -115,6 +116,7 @@
   }
 
   function draw(words) {
+    var delays = 400;
     d3.select("body").append("svg")
         .attr("width", 800)
         .attr("height", 600)
@@ -126,8 +128,6 @@
         .attr("class", function(d,i) {return "word " + i;})
         .each(function(d,i) {
           lettering(d);
-          var posX = 0;
-          //d.totalW = -1;
           d3.select(this)
             .selectAll("text")
               .data(d.letters)
@@ -137,6 +137,7 @@
               .style("font-family", "Impact")
               .style("fill", function(l) { return fill(i); })
               .attr("text-anchor", "middle")
+
               //.style("font-size", function(l) { return d.size + "px"; })
               /*
               .each(function(l, li) {
@@ -145,17 +146,44 @@
               })
               */
           switch(i) {
-            case 0: d3.select(this).wigglyScale(100, 400*i); break;
-            case 1: d3.select(this).spinIn(90, 1000-d.x, -d.y, 400, 400*i, 400); break;
-            case 2: d3.select(this).scaleUp(1000, 400*i, 0); break;
-            case 3: d3.select(this).scaleDown(1000, 400*i, 0); break;
-            case 4: d3.select(this).angry(1.25, 15, 150, 400*i); break;
-            case 5: d3.select(this).fadeIn(200, 400*i, 100); break;
-            case 6: d3.select(this).fadeOut(200, 400*i, 100); break;
-            default: d3.select(this).dropIn(1000, 200, 400*i, 100); break;
+
+            case 0: 
+              d3.select(this).wigglyScale(100, delays); 
+              delays += 100*d.letters.length ;
+              break;
+            case 1: 
+              d3.select(this).spinIn(90, 1000-d.x, -d.y, 400, delays, 400);
+              delays += 400*d.letters.length; 
+              break;
+            case 2: 
+              d3.select(this).scaleUp(1000, delays, 0); 
+              delays += 400;
+              break;
+            case 3: 
+              d3.select(this).scaleDown(1000, delays, 0); 
+              delays += 1000;
+              break;
+            case 4: 
+              d3.select(this).angry(1.25, 15, 150, delays);
+              delays += 150 * 6;
+              break;
+            case 5: 
+              d3.select(this).fadeIn(200, delays, 100);
+              delays += 250
+              break;
+            case 6: d3.select(this).fadeOut(200, delays, 100); 
+              delays += 250
+              break;
+            case 7: d3.select(this).happy(15, -30, 100, delays, 100*4); 
+              delays += 100 * 8
+              break;
+            default: 
+              d3.select(this).dropIn(1000, 200, delays, 100);
+              delays += 100
+              break;
 
           }
-          d3.select(this)//.wigglyScale(100, 200*i)
+          //d3.select(this)//.wigglyScale(100, 200*i)
           //.spinIn(90, 1000-d.x, -d.y, 400, 200*i, 400)
           //.scaleUp
           //.angry(1.15, 15, 100, 100*i)//
