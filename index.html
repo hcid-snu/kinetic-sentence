@@ -11,7 +11,8 @@
 
 <script>
   var fill = d3.scale.category20();
-  var words = ["Zero","oooooone", "twooo", "three", "four", "five", 
+  var words = ['wigglyScale', 'spinIn' , 'scaleUp', 'scaleDown','angry', 'fadeIn', 'fadeOut', 'dropIn']
+  /*["Zero","oooooone", "twooo", "three", "four", "five", 
   "six", "seven", "eeeight","nine", "ten", "eleven", "twelve", "thirteen", 
   "fourteen", "fifteen"]/*[
         "Lorem","ipsum","dolor","sit","amet,","consectetur","adipisicing",
@@ -20,7 +21,7 @@
         */
   d3.layout.cloud().size([1000, 600])
       .words(words.map(function(d) {
-        return {text: d, size: 18 + Math.random() * 64};
+        return {text: d, size: 24 + Math.random() * 64};
       }))
       .padding(1)
       .rotate(function() { return 0;/*~~(Math.random() * 2) * 90;*/ })
@@ -143,13 +144,25 @@
                 d.totalW += thisW;
               })
               */
-              
-          d3.select(this).wigglyScale(100, 100*i, 0)//.angry(1.25, 25, 200, 100*i)//
-          //.spinIn(90, 1000-d.x, -d.y, 400, 200*i, 400)//.fade(1.0, 1.0).scale(0.5, 1.0)
+          switch(i) {
+            case 0: d3.select(this).wigglyScale(100, 400*i); break;
+            case 1: d3.select(this).spinIn(90, 1000-d.x, -d.y, 400, 400*i, 400); break;
+            case 2: d3.select(this).scaleUp(1000, 400*i, 0); break;
+            case 3: d3.select(this).scaleDown(1000, 400*i, 0); break;
+            case 4: d3.select(this).angry(1.25, 15, 150, 400*i); break;
+            case 5: d3.select(this).fadeIn(200, 400*i, 100); break;
+            case 6: d3.select(this).fadeOut(200, 400*i, 100); break;
+            default: d3.select(this).dropIn(1000, 200, 400*i, 100); break;
+
+          }
+          d3.select(this)//.wigglyScale(100, 200*i)
+          //.spinIn(90, 1000-d.x, -d.y, 400, 200*i, 400)
+          //.scaleUp
+          //.angry(1.15, 15, 100, 100*i)//
           //.fadeIn(200, 200*i, 100);
+          //.fadeOut
           //.dropIn(1000, 200, 200*i, 100)
-          //.move(-10, 0, 0,0)
-          //.run(300, 150);
+          
         })
   }
 
