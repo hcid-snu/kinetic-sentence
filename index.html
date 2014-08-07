@@ -26,12 +26,11 @@
     this.font = "Helvetica";
     this.message = "I never said she stole my money."
     this.words = [];
-    this.emotion = "Neutral";
+    this.emotion = "Positive"//"Neutral";
 
-    this.neuTypes = ['dropIn', 'fadeIn', 'fadeOut', 'spinIn']
-    this.negTypes = ['raining', 'scaleDown', 'angry']
-    this.posTypes = ['scaleUp', 'wigglyScale', 'happy']
-
+    this.neuTypes = ['fadeIn']//['dropIn', 'fadeIn', 'fadeOut', 'spinIn']
+    this.negTypes = ['scaleDown', 'raining', 'angry']
+    this.posTypes = ['scaleUp', 'happy', 'wigglyScale']
     this.fill = d3.scale.category20();
     this.setTypes = function(emotion) {
       if(emotion==='Positive') return self.posTypes[Math.floor(Math.random() * self.posTypes.length)]
@@ -56,7 +55,6 @@
 
     this.setMotion = (function() {
       return function (self,d, delays) {
-        console.log(d.type)
         if (d.type === 'dropIn') {
           var duration = 200;
           d3.select(self).dropIn(1000, duration, delays, duration);
@@ -76,22 +74,22 @@
           d3.select(self).spinIn(-120, 1000-d.x, -d.y, duration, delays, 300);
           return delays += duration*(d.letters.length+1); 
         } else if (d.type ==='raining') {
-          var duration = 20;
-          var delayLetter = 800;
+          var duration = 30;
+          var delayLetter = 400;
           d3.select(self).raining(20, duration, delays, delayLetter); 
-          return delays += duration * d.letters.length;
+          return delays += duration * d.letters.length + delayLetter * d.letters.length/2 + 400;
         } else if (d.type === 'scaleUp') {
-          var duration = 1000;
+          var duration = 800;
           d3.select(self).scaleUp(duration, delays, 0); 
           return delays += duration;
         } else if (d.type === 'scaleDown') {
-          var duration = 1000;
+          var duration = 800;
           d3.select(self).scaleDown(duration, delays, 0); 
           return delays += duration;
         } else if (d.type === 'angry') {
-          var duration = 50;
-          d3.select(self).angry(1.25, 40, 4, duration, delays);
-          return delays += duration * 8;
+          var duration = 40;
+          d3.select(self).angry(1.25, 60, 4, duration, delays);
+          return delays += duration * 12;
         } else if (d.type === 'wigglyScale') {
           var duration = 200;
           d3.select(self).wigglyScale(duration, delays); 
@@ -101,38 +99,11 @@
           d3.select(self).happy(15, -60, duration, delays, 200); 
           return delays += duration * d.letters.length;
         }
-      
       }
     })();
 
-    this.initDraw = function(words) {
-      $('#canvas>svg').remove();
-      d3.select("#canvas").append("svg")
-          .attr("width", self.width)
-          .attr("height", self.height)
-        .append("g")
-          .attr("transform", "translate("+ [self.width/2, self.height/2 + 10] + ")")
-        .selectAll("g")
-          .data(words)
-        .enter().append("g")
-          .attr("class", function(d,i) {return "word " + i;})
-          .each(function(d,i) {
-            lettering(d);
-            d3.select(this)
-              .selectAll("text")
-                .data(d.letters)
-              .enter().append("text")
-                .attr("id", function(l, li) {return "text-" + i + "-" + li})
-                .text(function(l) {return l.letter})
-                .style("font-family", self.font)
-                .style("fill", function(l) { return self.fill(i); })
-                .attr("text-anchor", "middle")
-            
-          });
-    }
-
     this.draw = function (words) {
-      var delays = 400;
+      var delays = 1000;
       $('#canvas>svg').remove();
       d3.select("#canvas").append("svg")
           .attr("width", self.width)
@@ -154,15 +125,16 @@
                 .style("font-family", self.font)
                 .style("fill", function(l) { return self.fill(i); })
                 .attr("text-anchor", "middle")
-            //d3.select(this).fadeIn(400, delays, 0);
-            //delays += 800;
-            delays = self.setMotion(this,d,delays);
+            d.delays = self.setMotion(this,d,delays);
+            delays = d.delays;
           })
-        .selectAll("text")
-        .transition()
-        .delay(delays + 2000)
-        .duration(800)
-        .style("opacity", 1.0)
+          .each(function(d,i) {
+            d.totalDelays = delays;
+            self.setMotion(this, d, d.delays);
+          })
+
+        
+        //translate(" + [,] + ")rotate(" + (d.rotate +) + ")scale(" + [scale, scale] + ")"
     }
   }
 
@@ -171,7 +143,7 @@
     var gui = new dat.GUI();
     gui.add(inputs, 'message');
     gui.add(inputs, 'font', ['Helvetica', "Arial"]);
-    gui.add(inputs, 'emotion', ['Neutral', 'Negative', 'Positive']);
+    gui.add(inputs, 'emotion', ['Negative', 'Positive']);
     gui.add(inputs, 'GENERATE');
   });
 
