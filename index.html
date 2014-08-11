@@ -21,43 +21,57 @@
 </div>
 <script>
   $(document).ready(function() {
-    var gui = new dat.GUI();
+    var gui = new dat.GUI({ load: JSON });
     var inputs = new Inputs();
     inputs.update();
     var message = gui.add(inputs, 'message');
-    gui.add(inputs, 'update');
-    gui.add(inputs, 'font', ['Helvetica', "Arial"]);
-    gui.add(inputs, 'emotion', ['Negative', 'Positive']);
+    //gui.add(inputs, 'update');
+    gui.add(inputs, 'font', ['Helvetica', "Arial", "Courier", "Futura","Gill Sans", "Comic Sans MS","Times new roman", "Baskerville"]);
+    var emotion = gui.add(inputs, 'emotion', ['Negative', 'Positive']);
     
-    var gui_f1 = gui.addFolder('Setting Energy');
-    update(gui_f1, inputs);
-
+    var gui_f1 = gui.addFolder('Setting Energy')
+    var gui_f2 = gui.addFolder('Setting Type');
+    update(gui_f1, gui_f2, inputs);
     gui.add(inputs, 'generate');
     gui.remember(inputs);
     message.onFinishChange(function(value) {
-      // Fires when a controller loses focus.
-      console.log(value);
-      inputs.update();
-      update(gui_f1, inputs);
-      
+      update(gui_f1, gui_f2, inputs);
     });
+    emotion.onFinishChange(function(value) {
+      updateEmotion(gui_f2, inputs);
+    })
     
     //gui.remove(gui.__controllers[3]);
       //gui.__controllers[i].updateDisplay();
   });
 
-  function update(gui_f1, inputs) {
-    //gui_f1.revert();
-
-  
+  function update(gui_f1, gui_f2, inputs) {
+    inputs.update();
     gui_f1.__controllers.forEach(function(c, i) {
-      console.log(c);
       gui_f1.remove(c);
       delete gui_f1.__controllers[i]
     });
-    
-    for (w in inputs.words_obj) {
-        gui_f1.add(inputs.words_obj, w, 0, 10);  
+
+    gui_f2.__controllers.forEach(function(c, i) {
+      gui_f2.remove(c);
+      delete gui_f2.__controllers[i]
+    });
+    for (w in inputs.words_energy) {
+      gui_f1.add(inputs.words_energy, w, 0, 10).step(1);  
+      gui_f2.add(inputs.words_type, w, inputs.types[inputs.emotion])
+    }
+  }
+
+  function updateEmotion(gui_f2, inputs) {
+    inputs.update();
+    gui_f2.__controllers.forEach(function(c, i) {
+      console.log(c);
+      gui_f2.remove(c);
+      delete gui_f2.__controllers[i]
+    });
+
+    for (w in inputs.words_type) {
+      gui_f2.add(inputs.words_type, w, inputs.types[inputs.emotion])
     }
   }
 
