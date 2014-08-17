@@ -1,10 +1,14 @@
 kinetic-sentence
 ================
 
-- 해당 폴더로 이동 후 터미널에서 아래 실행
+1. 오른쪽 하단에서 zip 파일 다운로드 & 압축 해제 
 
-$ python -m SimpleHTTPServer 8000
 
-- 웹 브라우져(크롬) 
+2. 해당 폴더로 이동 후 터미널에서 아래 실행
 
-http://localhost:8000
+ $ python -m SimpleHTTPServer 8000
+
+
+3. 웹 브라우져(크롬) 에서 아래 주소 
+
+ http://localhost:8000
