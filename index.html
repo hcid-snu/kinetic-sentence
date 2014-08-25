@@ -34,6 +34,7 @@
     var gui_f2 = gui.addFolder('Setting Type');
     update(gui,gui_f1, gui_f2, inputs);
     gui.add(inputs, 'generate');
+    gui.add(inputs, 'automate');
     
     message.onFinishChange(function(value) {
       update(gui, gui_f1, gui_f2, inputs);
@@ -45,8 +46,7 @@
     gui.remember(inputs);
     gui.remember(inputs.words_type);
     gui.remember(inputs.words_energy);
-    //gui.remove(gui.__controllers[3]);
-      //gui.__controllers[i].updateDisplay();
+
   });
 
   function update(gui, gui_f1, gui_f2, inputs) {
