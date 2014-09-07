@@ -34,10 +34,11 @@
     var gui_f2 = gui.addFolder('Setting Type');
     update(gui,gui_f1, gui_f2, inputs);
     gui.add(inputs, 'generate');
+    /*
     gui.add(inputs, 'automate');
-    
     gui.add(inputs, 'startIndex');
     gui.add(inputs, 'endIndex');
+    */
     message.onFinishChange(function(value) {
       update(gui, gui_f1, gui_f2, inputs);
     });
